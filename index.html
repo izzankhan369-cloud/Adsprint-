@@ -1,0 +1,906 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lumière — Where Luxury Meets Experience</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            ink:    '#0D0D0D',
+            ivory:  '#F7F3EE',
+            stone:  '#8A7E72',
+            gold:   '#BFA46A',
+            goldL:  '#D4BB84',
+            smoke:  '#1C1C1C',
+          },
+          fontFamily: {
+            display: ['Playfair Display', 'serif'],
+            body:    ['Inter', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: 16px; }
+    body { background: #0D0D0D; color: #F7F3EE; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #0D0D0D; }
+    ::-webkit-scrollbar-thumb { background: #BFA46A; border-radius: 2px; }
+
+    /* ── Cursor blink ── */
+    .cursor {
+      display: inline-block; width: 2px; height: 0.9em;
+      background: #BFA46A; margin-left: 3px;
+      vertical-align: middle; animation: blink 0.9s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    /* ── Navbar ── */
+    #navbar {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+      transform: translateY(-100%); opacity: 0;
+    }
+    #navbar.visible { transform: translateY(0); opacity: 1; }
+    #navbar.solid {
+      background: rgba(13,13,13,0.88);
+      backdrop-filter: blur(18px) saturate(150%);
+      border-bottom: 1px solid rgba(191,164,106,0.12);
+    }
+    .nav-link {
+      font-family: 'Inter', sans-serif; font-size: 0.68rem;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: rgba(247,243,238,0.55);
+      transition: color 0.3s;
+      text-decoration: none;
+    }
+    .nav-link:hover { color: #BFA46A; }
+
+    /* ── Gold rule ── */
+    .g-rule { display: block; height: 1px; background: linear-gradient(to right, transparent, #BFA46A, transparent); }
+
+    /* ── Hero ── */
+    #hero {
+      position: relative; height: 100vh; min-height: 600px;
+      display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    #heroBg {
+      position: absolute; inset: 0; will-change: transform;
+      background: url('https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=2000&auto=format&fit=crop') center/cover no-repeat;
+    }
+    #heroOverlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to bottom, rgba(13,13,13,0.55) 0%, rgba(13,13,13,0.72) 60%, rgba(13,13,13,0.95) 100%);
+    }
+    #heroContent { position: relative; z-index: 10; text-align: center; padding: 0 clamp(1rem, 5vw, 2rem); max-width: 860px; }
+
+    /* ── Buttons ── */
+    .btn-primary {
+      display: inline-block; padding: 14px 40px;
+      background: linear-gradient(135deg, #BFA46A, #D4BB84);
+      color: #0D0D0D; font-family: 'Inter', sans-serif;
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
+      text-decoration: none; border-radius: 1px;
+      position: relative; overflow: hidden;
+      box-shadow: 0 0 0 rgba(191,164,106,0);
+      transition: box-shadow 0.4s, transform 0.3s;
+    }
+    .btn-primary::after {
+      content: ''; position: absolute; inset: -1px;
+      background: linear-gradient(135deg, #D4BB84, #BFA46A);
+      opacity: 0; transition: opacity 0.35s;
+      border-radius: inherit;
+    }
+    .btn-primary:hover { box-shadow: 0 0 32px rgba(191,164,106,0.5); transform: translateY(-2px); }
+    .btn-primary:hover::after { opacity: 1; }
+    .btn-primary span { position: relative; z-index: 1; }
+
+    .btn-secondary {
+      display: inline-block; padding: 13px 38px;
+      border: 1px solid rgba(191,164,106,0.5); color: rgba(247,243,238,0.85);
+      font-family: 'Inter', sans-serif; font-size: 0.72rem; font-weight: 400;
+      letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none;
+      border-radius: 1px; position: relative; overflow: hidden;
+      transition: border-color 0.4s, color 0.4s, box-shadow 0.4s, transform 0.3s;
+    }
+    .btn-secondary:hover {
+      border-color: #BFA46A; color: #BFA46A;
+      box-shadow: 0 0 22px rgba(191,164,106,0.2);
+      transform: translateY(-2px);
+    }
+
+    /* ── Glass card ── */
+    .glass {
+      background: rgba(247,243,238,0.04);
+      border: 1px solid rgba(247,243,238,0.08);
+      backdrop-filter: blur(12px);
+      border-radius: 2px;
+    }
+    .glass:hover { background: rgba(247,243,238,0.07); border-color: rgba(191,164,106,0.2); }
+
+    /* ── Feature card ── */
+    .feat-card {
+      transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94), box-shadow 0.4s;
+    }
+    .feat-card:hover { transform: translateY(-10px); box-shadow: 0 30px 60px rgba(0,0,0,0.4); }
+    .feat-icon {
+      width: 48px; height: 48px; border: 1px solid rgba(191,164,106,0.35);
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .feat-card:hover .feat-icon { border-color: #BFA46A; background: rgba(191,164,106,0.08); }
+
+    /* ── Gallery ── */
+    .gal-item { overflow: hidden; border-radius: 2px; position: relative; cursor: pointer; }
+    .gal-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);
+      display: block;
+    }
+    .gal-item:hover img { transform: scale(1.08); }
+    .gal-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,13,13,0.6), transparent);
+      opacity: 0; transition: opacity 0.4s;
+    }
+    .gal-item:hover .gal-overlay { opacity: 1; }
+
+    /* ── Testimonial ── */
+    .testi-card {
+      border-left: 2px solid #BFA46A;
+      padding-left: 1.5rem;
+    }
+
+    /* ── Section reveal (GSAP initial state) ── */
+    .reveal { opacity: 0; transform: translateY(52px); }
+    .reveal-left { opacity: 0; transform: translateX(-50px); }
+    .reveal-right { opacity: 0; transform: translateX(50px); }
+    .reveal-scale { opacity: 0; transform: scale(0.92); }
+
+    /* ── Hero initial states ── */
+    #heroEyebrow,
+    #heroButtons,
+    #heroSub,
+    #heroRule { opacity: 0; }
+
+    /* ── Scroll indicator ── */
+    .scroll-line {
+      width: 1px; height: 56px;
+      background: linear-gradient(to bottom, #BFA46A, transparent);
+      animation: scrollPulse 2.2s ease-in-out infinite;
+    }
+    @keyframes scrollPulse {
+      0%   { opacity: 0; transform: scaleY(0); transform-origin: top; }
+      50%  { opacity: 1; transform: scaleY(1); }
+      100% { opacity: 0; transform: scaleY(1) translateY(10px); }
+    }
+
+    /* ── Mobile menu ── */
+    #mobileDrawer {
+      position: fixed; inset: 0; z-index: 190;
+      background: rgba(13,13,13,0.97);
+      backdrop-filter: blur(20px);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s;
+    }
+    #mobileDrawer.open { opacity: 1; pointer-events: all; }
+
+    /* ── Number stat ── */
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
+      color: #BFA46A; line-height: 1;
+    }
+
+    /* ── Horizontal rule gold ── */
+    hr.gold { border: none; border-top: 1px solid rgba(191,164,106,0.2); }
+
+    /* ── Quote mark ── */
+    .quote-mark {
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem; line-height: 0.6;
+      color: #BFA46A; opacity: 0.35;
+      display: block; margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+
+<body>
+
+<!-- ════════════════════════════════════════
+     NAVIGATION
+════════════════════════════════════════ -->
+<nav id="navbar">
+  <div class="max-w-7xl mx-auto flex items-center justify-between" style="height:70px;">
+
+    <a href="#hero" class="flex flex-col leading-none">
+      <span style="font-family:'Playfair Display',serif; font-size:1.25rem; color:#F7F3EE; letter-spacing:0.06em;">Lumière</span>
+      <span style="font-family:'Inter',sans-serif; font-size:0.52rem; letter-spacing:0.3em; text-transform:uppercase; color:rgba(191,164,106,0.65);">Luxury Hospitality</span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-9">
+      <li><a href="#about"    class="nav-link">Story</a></li>
+      <li><a href="#features" class="nav-link">Services</a></li>
+      <li><a href="#gallery"  class="nav-link">Gallery</a></li>
+      <li><a href="#testimonials" class="nav-link">Reviews</a></li>
+      <li>
+        <a href="#cta" style="display:inline-block; padding:9px 26px; border:1px solid rgba(191,164,106,0.5); color:#BFA46A; font-family:'Inter',sans-serif; font-size:0.68rem; letter-spacing:0.18em; text-transform:uppercase; text-decoration:none; border-radius:1px; transition:all 0.3s;">
+          Reserve
+        </a>
+      </li>
+    </ul>
+
+    <button id="burgerBtn" class="md:hidden flex flex-col gap-1.5 p-2" aria-label="Toggle menu">
+      <span class="burger-l block h-px bg-ivory transition-all" style="width:24px;"></span>
+      <span class="burger-l block h-px bg-ivory transition-all" style="width:16px;"></span>
+      <span class="burger-l block h-px bg-ivory transition-all" style="width:24px;"></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile drawer -->
+<div id="mobileDrawer">
+  <button id="closeDrawer" style="position:absolute; top:1.5rem; right:1.5rem; color:rgba(247,243,238,0.5); background:none; border:none; cursor:pointer; font-size:1.5rem; line-height:1;">✕</button>
+  <a href="#about"        class="nav-link" style="font-size:1rem;">Story</a>
+  <a href="#features"     class="nav-link" style="font-size:1rem;">Services</a>
+  <a href="#gallery"      class="nav-link" style="font-size:1rem;">Gallery</a>
+  <a href="#testimonials" class="nav-link" style="font-size:1rem;">Reviews</a>
+  <a href="#cta"          class="nav-link" style="font-size:1rem; color:#BFA46A;">Reserve</a>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     HERO
+════════════════════════════════════════ -->
+<section id="hero">
+  <div id="heroBg"></div>
+  <div id="heroOverlay"></div>
+
+  <div id="heroContent">
+    <p id="heroEyebrow" style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.36em; text-transform:uppercase; color:#BFA46A; margin-bottom:2rem;">
+      Est. 1998 &nbsp;·&nbsp; A World Apart
+    </p>
+
+    <h1 id="heroHeadline" style="font-family:'Playfair Display',serif; font-size:clamp(2.2rem,6vw,5.5rem); line-height:1.1; color:#F7F3EE; margin-bottom:1.5rem; min-height:1.2em;">
+      <span id="typeTarget"></span><span class="cursor" id="typeCursor"></span>
+    </h1>
+
+    <span id="heroRule" class="g-rule" style="max-width:80px; margin:0 auto 1.8rem;"></span>
+
+    <p id="heroSub" style="font-family:'Inter',sans-serif; font-size:clamp(0.9rem,1.6vw,1.05rem); font-weight:300; color:rgba(247,243,238,0.6); letter-spacing:0.04em; line-height:1.8; max-width:540px; margin:0 auto 2.8rem;">
+      Discover a sanctuary where every detail is curated to perfection and every moment becomes a treasured memory.
+    </p>
+
+    <div id="heroButtons" class="flex flex-wrap items-center justify-center gap-4">
+      <a href="#about"  class="btn-primary"><span>Discover More</span></a>
+      <a href="#cta"    class="btn-secondary">Reserve a Stay</a>
+    </div>
+  </div>
+
+  <!-- Scroll hint -->
+  <div style="position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.6rem; z-index:10; opacity:0;" id="scrollHint">
+    <span style="font-family:'Inter',sans-serif; font-size:0.58rem; letter-spacing:0.28em; text-transform:uppercase; color:rgba(247,243,238,0.4);">Scroll</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     ABOUT / STORY
+════════════════════════════════════════ -->
+<section id="about" style="padding:clamp(5rem,10vw,9rem) clamp(1.5rem,5vw,4rem); background:#0D0D0D;">
+  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+
+    <div class="reveal-left">
+      <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.28em; text-transform:uppercase; color:#BFA46A; margin-bottom:1rem;">Our Philosophy</p>
+      <h2 style="font-family:'Playfair Display',serif; font-size:clamp(2rem,4vw,3.2rem); color:#F7F3EE; line-height:1.2; margin-bottom:1.5rem;">
+        An Art of Living<br/><em style="color:#BFA46A;">Redefined</em>
+      </h2>
+      <span class="g-rule" style="max-width:56px; margin-bottom:2rem; display:block;"></span>
+      <p style="font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:300; color:rgba(247,243,238,0.55); line-height:1.9; margin-bottom:1.2rem;">
+        Born from a vision of quiet grandeur, Lumière reimagines the art of hospitality. Every space is a canvas; every guest, a cherished story. We do not offer a stay — we offer a transformation.
+      </p>
+      <p style="font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:300; color:rgba(247,243,238,0.55); line-height:1.9; margin-bottom:2.5rem;">
+        From hand-selected linens to bespoke culinary experiences, our curators obsess over detail so you need not think about anything except living fully.
+      </p>
+      <a href="#features" class="btn-secondary">Our Offerings</a>
+    </div>
+
+    <div class="reveal-right" style="position:relative;">
+      <div class="gal-item shadow-2xl" style="aspect-ratio:3/4; max-height:560px;">
+        <img src="https://images.unsplash.com/photo-1551882547-ff40c63fe5fa?w=900&auto=format&fit=crop" alt="Luxury suite" loading="lazy" />
+        <div class="gal-overlay"></div>
+      </div>
+      <!-- floating stat card -->
+      <div class="glass" style="position:absolute; bottom:-2rem; left:-2rem; padding:1.8rem 2.2rem; min-width:180px; display:none;" id="statCard">
+        <div class="stat-num">26</div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(247,243,238,0.45); margin-top:0.4rem;">Years of Excellence</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Stats row -->
+  <div class="max-w-7xl mx-auto mt-20 md:mt-28">
+    <hr class="gold mb-12" />
+    <div class="reveal grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+      <div>
+        <div class="stat-num">98<span style="font-size:0.5em; color:rgba(191,164,106,0.6);">%</span></div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(247,243,238,0.4); margin-top:0.6rem;">Guest Satisfaction</p>
+      </div>
+      <div>
+        <div class="stat-num">42</div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(247,243,238,0.4); margin-top:0.6rem;">Curated Suites</p>
+      </div>
+      <div>
+        <div class="stat-num">18</div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(247,243,238,0.4); margin-top:0.6rem;">World Awards</p>
+      </div>
+      <div>
+        <div class="stat-num">6</div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.18em; text-transform:uppercase; color:rgba(247,243,238,0.4); margin-top:0.6rem;">Global Locations</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     FEATURES / SERVICES
+════════════════════════════════════════ -->
+<section id="features" style="padding:clamp(5rem,10vw,9rem) clamp(1.5rem,5vw,4rem); background:#111111;">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="reveal text-center mb-16">
+      <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.28em; text-transform:uppercase; color:#BFA46A; margin-bottom:1rem;">What We Offer</p>
+      <h2 style="font-family:'Playfair Display',serif; font-size:clamp(1.9rem,3.5vw,3rem); color:#F7F3EE; line-height:1.2; margin-bottom:1rem;">
+        Curated <em style="color:#BFA46A;">Experiences</em>
+      </h2>
+      <span class="g-rule" style="max-width:56px; margin:0 auto;"></span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- Card 1 -->
+      <div class="feat-card glass reveal" style="padding:2.5rem;">
+        <div class="feat-icon mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BFA46A" stroke-width="1.5" stroke-linecap="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+        </div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:#BFA46A; margin-bottom:0.8rem;">Accommodation</p>
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.35rem; color:#F7F3EE; margin-bottom:1rem;">Signature Suites</h3>
+        <p style="font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:300; color:rgba(247,243,238,0.5); line-height:1.85;">
+          Thoughtfully designed spaces where heritage architecture embraces contemporary comfort. Each suite tells a unique story.
+        </p>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="feat-card glass reveal" style="padding:2.5rem;">
+        <div class="feat-icon mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BFA46A" stroke-width="1.5" stroke-linecap="round">
+            <path d="M18 8h1a4 4 0 010 8h-1"/><path d="M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+          </svg>
+        </div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:#BFA46A; margin-bottom:0.8rem;">Culinary Arts</p>
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.35rem; color:#F7F3EE; margin-bottom:1rem;">Fine Dining</h3>
+        <p style="font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:300; color:rgba(247,243,238,0.5); line-height:1.85;">
+          A Michelin-starred kitchen guided by the seasons. Private dining rooms available for intimate celebrations.
+        </p>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="feat-card glass reveal" style="padding:2.5rem;">
+        <div class="feat-icon mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BFA46A" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+          </svg>
+        </div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:#BFA46A; margin-bottom:0.8rem;">Wellness</p>
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.35rem; color:#F7F3EE; margin-bottom:1rem;">The Lumière Spa</h3>
+        <p style="font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:300; color:rgba(247,243,238,0.5); line-height:1.85;">
+          Ancient rituals meet modern science. Our master therapists craft bespoke treatments for body, mind, and spirit.
+        </p>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="feat-card glass reveal" style="padding:2.5rem;">
+        <div class="feat-icon mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BFA46A" stroke-width="1.5" stroke-linecap="round">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+        </div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:#BFA46A; margin-bottom:0.8rem;">Experiences</p>
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.35rem; color:#F7F3EE; margin-bottom:1rem;">Local Discovery</h3>
+        <p style="font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:300; color:rgba(247,243,238,0.5); line-height:1.85;">
+          Private guides, chartered yachts, and exclusive cultural access. We unlock destinations others simply cannot.
+        </p>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="feat-card glass reveal" style="padding:2.5rem;">
+        <div class="feat-icon mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BFA46A" stroke-width="1.5" stroke-linecap="round">
+            <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+          </svg>
+        </div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:#BFA46A; margin-bottom:0.8rem;">Events</p>
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.35rem; color:#F7F3EE; margin-bottom:1rem;">Private Events</h3>
+        <p style="font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:300; color:rgba(247,243,238,0.5); line-height:1.85;">
+          Weddings, soirées, and board retreats elevated to theatrical perfection by our dedicated events atelier.
+        </p>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="feat-card glass reveal" style="padding:2.5rem;">
+        <div class="feat-icon mb-5">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#BFA46A" stroke-width="1.5" stroke-linecap="round">
+            <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/>
+          </svg>
+        </div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:#BFA46A; margin-bottom:0.8rem;">Concierge</p>
+        <h3 style="font-family:'Playfair Display',serif; font-size:1.35rem; color:#F7F3EE; margin-bottom:1rem;">White Glove Care</h3>
+        <p style="font-family:'Inter',sans-serif; font-size:0.85rem; font-weight:300; color:rgba(247,243,238,0.5); line-height:1.85;">
+          Your personal concierge team anticipates every need — available at any hour, for any request, without limits.
+        </p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     GALLERY
+════════════════════════════════════════ -->
+<section id="gallery" style="padding:clamp(5rem,10vw,9rem) clamp(1.5rem,5vw,4rem); background:#0D0D0D;">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="reveal text-center mb-14">
+      <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.28em; text-transform:uppercase; color:#BFA46A; margin-bottom:1rem;">Visual Journey</p>
+      <h2 style="font-family:'Playfair Display',serif; font-size:clamp(1.9rem,3.5vw,3rem); color:#F7F3EE; line-height:1.2;">
+        Life at <em style="color:#BFA46A;">Lumière</em>
+      </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(12,1fr); grid-auto-rows:220px; gap:12px;">
+
+      <div class="reveal gal-item" style="grid-column:span 8; grid-row:span 2;">
+        <img src="https://images.unsplash.com/photo-1618773928121-c32242e63f39?w=1200&auto=format&fit=crop" alt="Suite interior" loading="lazy" />
+        <div class="gal-overlay"></div>
+      </div>
+
+      <div class="reveal gal-item" style="grid-column:span 4; grid-row:span 1;">
+        <img src="https://images.unsplash.com/photo-1540541338537-1220059af2b6?w=800&auto=format&fit=crop" alt="Pool" loading="lazy" />
+        <div class="gal-overlay"></div>
+      </div>
+
+      <div class="reveal gal-item" style="grid-column:span 4; grid-row:span 1;">
+        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&auto=format&fit=crop" alt="Dining" loading="lazy" />
+        <div class="gal-overlay"></div>
+      </div>
+
+      <div class="reveal gal-item" style="grid-column:span 4; grid-row:span 1;">
+        <img src="https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&auto=format&fit=crop" alt="Spa" loading="lazy" />
+        <div class="gal-overlay"></div>
+      </div>
+
+      <div class="reveal gal-item" style="grid-column:span 4; grid-row:span 1;">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&auto=format&fit=crop" alt="Architecture" loading="lazy" />
+        <div class="gal-overlay"></div>
+      </div>
+
+      <div class="reveal gal-item" style="grid-column:span 4; grid-row:span 1;">
+        <img src="https://images.unsplash.com/photo-1564501049412-61c2a3083791?w=800&auto=format&fit=crop" alt="Lobby" loading="lazy" />
+        <div class="gal-overlay"></div>
+      </div>
+
+    </div>
+
+    <!-- Mobile grid fallback -->
+    <div class="md:hidden grid grid-cols-2 gap-3 mt-4">
+      <div class="gal-item" style="aspect-ratio:1/1;">
+        <img src="https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600&auto=format&fit=crop" alt="Room" loading="lazy" />
+        <div class="gal-overlay"></div>
+      </div>
+      <div class="gal-item" style="aspect-ratio:1/1;">
+        <img src="https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=600&auto=format&fit=crop" alt="Pool view" loading="lazy" />
+        <div class="gal-overlay"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     TESTIMONIALS
+════════════════════════════════════════ -->
+<section id="testimonials" style="padding:clamp(5rem,10vw,9rem) clamp(1.5rem,5vw,4rem); background:#111111;">
+  <div class="max-w-6xl mx-auto">
+
+    <div class="reveal text-center mb-16">
+      <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.28em; text-transform:uppercase; color:#BFA46A; margin-bottom:1rem;">Guest Voices</p>
+      <h2 style="font-family:'Playfair Display',serif; font-size:clamp(1.9rem,3.5vw,3rem); color:#F7F3EE; line-height:1.2;">
+        Words of <em style="color:#BFA46A;">Our Guests</em>
+      </h2>
+      <span class="g-rule" style="max-width:56px; margin:1.5rem auto 0;"></span>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <div class="reveal glass" style="padding:2.5rem;">
+        <span class="quote-mark">"</span>
+        <p class="testi-card" style="font-family:'Playfair Display',serif; font-style:italic; font-size:1rem; color:rgba(247,243,238,0.75); line-height:1.8; margin-bottom:2rem;">
+          Lumière is not a hotel. It is a feeling you spend the rest of your life trying to recapture. We returned four times last year.
+        </p>
+        <div style="display:flex; align-items:center; gap:1rem;">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="Guest" loading="lazy" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:1px solid rgba(191,164,106,0.3);" />
+          <div>
+            <p style="font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:500; color:#F7F3EE;">Sofia Marchetti</p>
+            <p style="font-family:'Inter',sans-serif; font-size:0.65rem; color:rgba(247,243,238,0.35); letter-spacing:0.1em;">Milan, Italy</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal glass" style="padding:2.5rem;">
+        <span class="quote-mark">"</span>
+        <p class="testi-card" style="font-family:'Playfair Display',serif; font-style:italic; font-size:1rem; color:rgba(247,243,238,0.75); line-height:1.8; margin-bottom:2rem;">
+          Every detail whispers intention. The spa, the cuisine, the silence — Lumière understands what true luxury means.
+        </p>
+        <div style="display:flex; align-items:center; gap:1rem;">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="Guest" loading="lazy" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:1px solid rgba(191,164,106,0.3);" />
+          <div>
+            <p style="font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:500; color:#F7F3EE;">James Harrington</p>
+            <p style="font-family:'Inter',sans-serif; font-size:0.65rem; color:rgba(247,243,238,0.35); letter-spacing:0.1em;">London, England</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal glass" style="padding:2.5rem;">
+        <span class="quote-mark">"</span>
+        <p class="testi-card" style="font-family:'Playfair Display',serif; font-style:italic; font-size:1rem; color:rgba(247,243,238,0.75); line-height:1.8; margin-bottom:2rem;">
+          My husband proposed here. Lumière orchestrated every moment flawlessly. We are forever grateful for the magic they created.
+        </p>
+        <div style="display:flex; align-items:center; gap:1rem;">
+          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=80" alt="Guest" loading="lazy" style="width:42px; height:42px; border-radius:50%; object-fit:cover; border:1px solid rgba(191,164,106,0.3);" />
+          <div>
+            <p style="font-family:'Inter',sans-serif; font-size:0.8rem; font-weight:500; color:#F7F3EE;">Anika Chandra</p>
+            <p style="font-family:'Inter',sans-serif; font-size:0.65rem; color:rgba(247,243,238,0.35); letter-spacing:0.1em;">Mumbai, India</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     CTA
+════════════════════════════════════════ -->
+<section id="cta" style="position:relative; padding:clamp(6rem,12vw,11rem) clamp(1.5rem,5vw,4rem); overflow:hidden;">
+  <div style="position:absolute; inset:0; background:url('https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=1800&auto=format&fit=crop') center/cover no-repeat;"></div>
+  <div style="position:absolute; inset:0; background:rgba(13,13,13,0.82);"></div>
+
+  <div class="max-w-3xl mx-auto text-center reveal" style="position:relative; z-index:10;">
+    <p style="font-family:'Inter',sans-serif; font-size:0.65rem; letter-spacing:0.28em; text-transform:uppercase; color:#BFA46A; margin-bottom:1.2rem;">Begin Your Story</p>
+    <h2 style="font-family:'Playfair Display',serif; font-size:clamp(2rem,4.5vw,3.8rem); color:#F7F3EE; line-height:1.2; margin-bottom:1.5rem;">
+      Your <em style="color:#BFA46A;">Exceptional</em><br/>Stay Awaits
+    </h2>
+    <span class="g-rule" style="max-width:56px; margin:0 auto 2rem;"></span>
+    <p style="font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:300; color:rgba(247,243,238,0.55); line-height:1.9; margin-bottom:3rem; max-width:480px; margin-left:auto; margin-right:auto;">
+      Contact our reservations team to design a stay crafted entirely around you. No detail is too small, no request too extraordinary.
+    </p>
+    <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; align-items:center; margin-bottom:2rem;">
+      <a href="mailto:reservations@lumiere.com" class="btn-primary"><span>Make a Reservation</span></a>
+      <a href="tel:+18001234567" class="btn-secondary">Call Concierge</a>
+    </div>
+    <p style="font-family:'Inter',sans-serif; font-size:0.7rem; color:rgba(247,243,238,0.25); letter-spacing:0.1em;">
+      Available 24 hours · 7 days a week · In 12 languages
+    </p>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     FOOTER
+════════════════════════════════════════ -->
+<footer style="background:#080808; padding:clamp(4rem,8vw,6rem) clamp(1.5rem,5vw,4rem) 2rem;">
+  <div class="max-w-7xl mx-auto">
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-14">
+
+      <div class="md:col-span-1">
+        <p style="font-family:'Playfair Display',serif; font-size:1.6rem; color:#F7F3EE; margin-bottom:0.4rem;">Lumière</p>
+        <p style="font-family:'Inter',sans-serif; font-size:0.58rem; letter-spacing:0.28em; text-transform:uppercase; color:rgba(191,164,106,0.5); margin-bottom:1.5rem;">Est. 1998</p>
+        <p style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:300; color:rgba(247,243,238,0.35); line-height:1.8;">
+          Six destinations. One unwavering standard of excellence.
+        </p>
+      </div>
+
+      <div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:#BFA46A; margin-bottom:1.4rem;">Explore</p>
+        <ul style="display:flex; flex-direction:column; gap:0.8rem;">
+          <li><a href="#about"        class="nav-link" style="font-size:0.82rem;">Our Story</a></li>
+          <li><a href="#features"     class="nav-link" style="font-size:0.82rem;">Services</a></li>
+          <li><a href="#gallery"      class="nav-link" style="font-size:0.82rem;">Gallery</a></li>
+          <li><a href="#testimonials" class="nav-link" style="font-size:0.82rem;">Reviews</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:#BFA46A; margin-bottom:1.4rem;">Destinations</p>
+        <ul style="display:flex; flex-direction:column; gap:0.8rem;">
+          <li><a href="#" class="nav-link" style="font-size:0.82rem;">Paris, France</a></li>
+          <li><a href="#" class="nav-link" style="font-size:0.82rem;">Amalfi, Italy</a></li>
+          <li><a href="#" class="nav-link" style="font-size:0.82rem;">Kyoto, Japan</a></li>
+          <li><a href="#" class="nav-link" style="font-size:0.82rem;">Maldives</a></li>
+          <li><a href="#" class="nav-link" style="font-size:0.82rem;">Goa, India</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <p style="font-family:'Inter',sans-serif; font-size:0.6rem; letter-spacing:0.22em; text-transform:uppercase; color:#BFA46A; margin-bottom:1.4rem;">Contact</p>
+        <ul style="display:flex; flex-direction:column; gap:0.9rem;">
+          <li style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:300; color:rgba(247,243,238,0.4);">reservations@lumiere.com</li>
+          <li style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:300; color:rgba(247,243,238,0.4);">+1 (800) 123 4567</li>
+          <li style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:300; color:rgba(247,243,238,0.4);">24 / 7 Concierge Line</li>
+        </ul>
+        <div style="display:flex; gap:0.75rem; margin-top:1.5rem;">
+          <a href="#" aria-label="Instagram" style="width:34px; height:34px; border:1px solid rgba(247,243,238,0.12); border-radius:50%; display:flex; align-items:center; justify-content:center; color:rgba(247,243,238,0.4); transition:all 0.3s; text-decoration:none;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
+          </a>
+          <a href="#" aria-label="Facebook" style="width:34px; height:34px; border:1px solid rgba(247,243,238,0.12); border-radius:50%; display:flex; align-items:center; justify-content:center; color:rgba(247,243,238,0.4); transition:all 0.3s; text-decoration:none;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          <a href="#" aria-label="Twitter" style="width:34px; height:34px; border:1px solid rgba(247,243,238,0.12); border-radius:50%; display:flex; align-items:center; justify-content:center; color:rgba(247,243,238,0.4); transition:all 0.3s; text-decoration:none;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <hr class="gold mb-6" />
+
+    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:1rem;">
+      <p style="font-family:'Inter',sans-serif; font-size:0.68rem; color:rgba(247,243,238,0.18);">© 2025 Lumière Hotels & Residences. All rights reserved.</p>
+      <div style="display:flex; gap:2rem;">
+        <a href="#" style="font-family:'Inter',sans-serif; font-size:0.68rem; color:rgba(247,243,238,0.18); text-decoration:none;">Privacy</a>
+        <a href="#" style="font-family:'Inter',sans-serif; font-size:0.68rem; color:rgba(247,243,238,0.18); text-decoration:none;">Terms</a>
+        <a href="#" style="font-family:'Inter',sans-serif; font-size:0.68rem; color:rgba(247,243,238,0.18); text-decoration:none;">Cookies</a>
+      </div>
+    </div>
+
+  </div>
+</footer>
+
+
+<!-- ════════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+(function () {
+  'use strict';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ─────────────────────────────────────
+     TYPEWRITER
+  ───────────────────────────────────── */
+  var phrases   = ['Where Luxury\nMeets Experience', 'A Sanctuary\nBeyond Compare', 'Moments Crafted\nWith Intention'];
+  var phraseIdx = 0;
+  var charIdx   = 0;
+  var isDeleting = false;
+  var typeTarget = document.getElementById('typeTarget');
+  var typeCursor = document.getElementById('typeCursor');
+  var typeDelay  = 0;
+
+  function typeStep() {
+    var raw     = phrases[phraseIdx];
+    var display = raw.replace(/\n/g, '<br/>');
+    var plain   = raw.replace(/\n/g, '\n');
+    var visible = plain.substring(0, charIdx);
+    typeTarget.innerHTML = visible.replace(/\n/g, '<br/>');
+
+    if (!isDeleting) {
+      if (charIdx < plain.length) {
+        charIdx++;
+        typeDelay = 55 + Math.random() * 35;
+      } else {
+        isDeleting = true;
+        typeDelay  = 2200;
+      }
+    } else {
+      if (charIdx > 0) {
+        charIdx--;
+        typeDelay = 28;
+      } else {
+        isDeleting = false;
+        phraseIdx  = (phraseIdx + 1) % phrases.length;
+        typeDelay  = 500;
+      }
+    }
+    setTimeout(typeStep, typeDelay);
+  }
+
+  /* ─────────────────────────────────────
+     HERO ENTRANCE SEQUENCE
+  ───────────────────────────────────── */
+  var heroBg    = document.getElementById('heroBg');
+  var heroEyebrow = document.getElementById('heroEyebrow');
+  var heroSub   = document.getElementById('heroSub');
+  var heroRule  = document.getElementById('heroRule');
+  var heroBtns  = document.getElementById('heroButtons');
+  var scrollHint = document.getElementById('scrollHint');
+
+  // Start bg invisible
+  gsap.set(heroBg, { opacity: 0 });
+
+  var heroTl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+  heroTl
+    .to(heroBg, { opacity: 1, duration: 1.8 })
+    .to(heroEyebrow, { opacity: 1, y: 0, duration: 0.8 }, '-=0.4')
+    .add(function () {
+      // Kick off typewriter after eyebrow appears
+      setTimeout(typeStep, 100);
+    })
+    .to(heroRule,  { opacity: 1, duration: 0.5 }, '+=1.2')
+    .to(heroSub,   { opacity: 1, y: 0, duration: 0.8 }, '-=0.2')
+    .to(heroBtns,  { opacity: 1, y: 0, duration: 0.7 }, '-=0.3')
+    .to(scrollHint,{ opacity: 1, duration: 0.6 }, '-=0.1');
+
+  // Pre-position animated elements
+  gsap.set([heroEyebrow, heroSub, heroBtns], { y: 30 });
+
+  /* ─────────────────────────────────────
+     PARALLAX HERO
+  ───────────────────────────────────── */
+  gsap.to('#heroBg', {
+    yPercent: 22,
+    ease: 'none',
+    scrollTrigger: {
+      trigger: '#hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: true
+    }
+  });
+
+  /* ─────────────────────────────────────
+     NAVBAR
+  ───────────────────────────────────── */
+  var navbar = document.getElementById('navbar');
+
+  setTimeout(function () {
+    navbar.classList.add('visible');
+  }, 1400);
+
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 80) {
+      navbar.classList.add('solid');
+    } else {
+      navbar.classList.remove('solid');
+    }
+  }, { passive: true });
+
+  /* ─────────────────────────────────────
+     MOBILE MENU
+  ───────────────────────────────────── */
+  var burgerBtn    = document.getElementById('burgerBtn');
+  var mobileDrawer = document.getElementById('mobileDrawer');
+  var closeDrawer  = document.getElementById('closeDrawer');
+  var mobLinks     = mobileDrawer.querySelectorAll('a');
+
+  function openMenu()  { mobileDrawer.classList.add('open'); }
+  function closeMenu() { mobileDrawer.classList.remove('open'); }
+
+  burgerBtn.addEventListener('click', openMenu);
+  closeDrawer.addEventListener('click', closeMenu);
+  mobLinks.forEach(function (l) { l.addEventListener('click', closeMenu); });
+
+  /* ─────────────────────────────────────
+     SCROLL REVEALS
+  ───────────────────────────────────── */
+  function makeReveal(selector, vars, triggerVars) {
+    document.querySelectorAll(selector).forEach(function (el) {
+      gsap.fromTo(el, vars.from, Object.assign({}, vars.to, {
+        scrollTrigger: Object.assign({ trigger: el, start: 'top 88%', toggleActions: 'play none none none' }, triggerVars || {})
+      }));
+    });
+  }
+
+  makeReveal('.reveal',
+    { from: { opacity: 0, y: 54 }, to: { opacity: 1, y: 0, duration: 0.95, ease: 'power2.out' } }
+  );
+
+  makeReveal('.reveal-left',
+    { from: { opacity: 0, x: -54 }, to: { opacity: 1, x: 0, duration: 1, ease: 'power2.out' } }
+  );
+
+  makeReveal('.reveal-right',
+    { from: { opacity: 0, x: 54 }, to: { opacity: 1, x: 0, duration: 1, ease: 'power2.out' } }
+  );
+
+  makeReveal('.reveal-scale',
+    { from: { opacity: 0, scale: 0.9 }, to: { opacity: 1, scale: 1, duration: 0.9, ease: 'power2.out' } }
+  );
+
+  /* Staggered feature cards */
+  gsap.fromTo('.feat-card',
+    { opacity: 0, y: 60 },
+    {
+      opacity: 1, y: 0, duration: 0.85, ease: 'power2.out', stagger: 0.14,
+      scrollTrigger: { trigger: '#features', start: 'top 80%', toggleActions: 'play none none none' }
+    }
+  );
+
+  /* Staggered gallery items */
+  gsap.fromTo('.gal-item',
+    { opacity: 0, y: 36, scale: 0.97 },
+    {
+      opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power2.out', stagger: 0.1,
+      scrollTrigger: { trigger: '#gallery', start: 'top 82%', toggleActions: 'play none none none' }
+    }
+  );
+
+  /* Testimonial stagger */
+  gsap.fromTo('.glass',
+    { opacity: 0, y: 44 },
+    {
+      opacity: 1, y: 0, duration: 0.85, ease: 'power2.out', stagger: 0.18,
+      scrollTrigger: { trigger: '#testimonials', start: 'top 85%', toggleActions: 'play none none none' }
+    }
+  );
+
+  /* ─────────────────────────────────────
+     SMOOTH ANCHOR SCROLL
+  ───────────────────────────────────── */
+  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
+    a.addEventListener('click', function (e) {
+      var t = document.querySelector(this.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+
+  /* ─────────────────────────────────────
+     STAT CARD SHOW ON MD+
+  ───────────────────────────────────── */
+  var statCard = document.getElementById('statCard');
+  if (window.innerWidth >= 768 && statCard) {
+    statCard.style.display = 'block';
+    gsap.fromTo(statCard,
+      { opacity: 0, y: 24 },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power2.out',
+        scrollTrigger: { trigger: '#about', start: 'top 70%', toggleActions: 'play none none none' }
+      }
+    );
+  }
+
+})();
+</script>
+
+</body>
+</html>
+```
