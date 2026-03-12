@@ -1,935 +1,556 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Adsprint — Premium Digital Agency</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@200;300;400;500&display=swap" rel="stylesheet" />
-
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            navy:   '#0B0F2F',
-            dpurple:'#4C1D95',
-            accent: '#7C3AED',
-            accentL:'#A78BFA',
-          },
-          fontFamily: {
-            display: ['Space Grotesk', 'sans-serif'],
-            body:    ['Inter', 'sans-serif'],
-          }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adsprint - Strategic Websites for Modern Businesses</title>
+    <meta name="description" content="We design powerful digital experiences that help businesses grow online. Premium website design, SEO, and automation systems.">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0B0F2F',
+                        secondary: '#4C1D95',
+                        accent: '#7C3AED',
+                    },
+                    fontFamily: {
+                        heading: ['Space Grotesk', 'sans-serif'],
+                        body: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
         }
-      }
-    }
-  </script>
-
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      background: #0B0F2F;
-      color: #fff;
-      font-family: 'Inter', sans-serif;
-      overflow-x: hidden;
-    }
-
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #0B0F2F; }
-    ::-webkit-scrollbar-thumb { background: #7C3AED; border-radius: 2px; }
-
-    /* ── Cursor ── */
-    .cursor-blink {
-      display: inline-block; width: 3px; height: 1em;
-      background: #7C3AED; margin-left: 2px;
-      vertical-align: middle; border-radius: 1px;
-      animation: cblink 0.85s step-end infinite;
-    }
-    @keyframes cblink { 50% { opacity: 0; } }
-
-    /* ── Noise overlay ── */
-    body::before {
-      content: '';
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      opacity: 0.4;
-    }
-
-    /* ── Nav ── */
-    #navbar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
-      padding: 0 clamp(1.5rem, 5vw, 4rem);
-      transform: translateY(-100%); opacity: 0;
-      transition: background 0.5s, box-shadow 0.5s;
-    }
-    #navbar.solid {
-      background: rgba(11,15,47,0.82);
-      backdrop-filter: blur(20px) saturate(160%);
-      box-shadow: 0 1px 0 rgba(124,58,237,0.15);
-    }
-    .nav-link {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.75rem; font-weight: 500;
-      letter-spacing: 0.12em; text-transform: uppercase;
-      color: rgba(255,255,255,0.5);
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    .nav-link:hover { color: #A78BFA; }
-
-    /* ── Glow orbs ── */
-    .orb {
-      position: absolute; border-radius: 50%; pointer-events: none; filter: blur(80px);
-    }
-    .orb-1 { width: 600px; height: 600px; background: rgba(124,58,237,0.18); top: -200px; right: -150px; }
-    .orb-2 { width: 500px; height: 500px; background: rgba(76,29,149,0.22); bottom: -100px; left: -120px; }
-    .orb-3 { width: 350px; height: 350px; background: rgba(124,58,237,0.12); top: 40%; left: 30%; }
-
-    /* ── Hero ── */
-    #hero {
-      position: relative; min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-      background: linear-gradient(135deg, #0B0F2F 0%, #1a0a3d 50%, #0B0F2F 100%);
-    }
-
-    /* ── Grid lines ── */
-    .grid-lines {
-      position: absolute; inset: 0; pointer-events: none;
-      background-image:
-        linear-gradient(rgba(124,58,237,0.06) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(124,58,237,0.06) 1px, transparent 1px);
-      background-size: 72px 72px;
-      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
-    }
-
-    /* ── Buttons ── */
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 14px 34px;
-      background: linear-gradient(135deg, #7C3AED, #5B21B6);
-      color: #fff; font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.8rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
-      text-decoration: none; border-radius: 4px;
-      box-shadow: 0 0 0 rgba(124,58,237,0);
-      transition: transform 0.3s, box-shadow 0.4s;
-      position: relative; overflow: hidden;
-    }
-    .btn-primary::before {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(135deg, #9D5FFF, #7C3AED);
-      opacity: 0; transition: opacity 0.35s;
-    }
-    .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 0 36px rgba(124,58,237,0.55); }
-    .btn-primary:hover::before { opacity: 1; }
-    .btn-primary span { position: relative; z-index: 1; }
-
-    .btn-outline {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 13px 32px;
-      border: 1px solid rgba(124,58,237,0.5);
-      color: rgba(255,255,255,0.8);
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.8rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase;
-      text-decoration: none; border-radius: 4px;
-      transition: border-color 0.3s, color 0.3s, transform 0.3s, box-shadow 0.4s;
-    }
-    .btn-outline:hover {
-      border-color: #7C3AED; color: #A78BFA;
-      transform: translateY(-3px); box-shadow: 0 0 22px rgba(124,58,237,0.25);
-    }
-
-    /* ── Glass card ── */
-    .glass {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.08);
-      backdrop-filter: blur(12px);
-      border-radius: 12px;
-      transition: background 0.35s, border-color 0.35s, transform 0.35s, box-shadow 0.35s;
-    }
-    .glass:hover {
-      background: rgba(124,58,237,0.08);
-      border-color: rgba(124,58,237,0.35);
-      transform: translateY(-8px);
-      box-shadow: 0 20px 60px rgba(124,58,237,0.2);
-    }
-
-    /* ── Service icon ── */
-    .svc-icon {
-      width: 52px; height: 52px; border-radius: 12px;
-      background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(76,29,149,0.3));
-      border: 1px solid rgba(124,58,237,0.3);
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.35s;
-    }
-    .glass:hover .svc-icon {
-      background: linear-gradient(135deg, rgba(124,58,237,0.45), rgba(76,29,149,0.5));
-    }
-
-    /* ── Process step ── */
-    .step-num {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 4rem; font-weight: 700; line-height: 1;
-      background: linear-gradient(135deg, rgba(124,58,237,0.3), rgba(167,139,250,0.15));
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .step-line {
-      position: absolute; top: 2rem; left: calc(50% + 2rem); right: calc(-50% + 2rem);
-      height: 1px; background: linear-gradient(to right, rgba(124,58,237,0.4), transparent);
-    }
-
-    /* ── Gradient text ── */
-    .grad-text {
-      background: linear-gradient(135deg, #A78BFA, #7C3AED, #C4B5FD);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    /* ── Divider ── */
-    .divider {
-      height: 1px;
-      background: linear-gradient(to right, transparent, rgba(124,58,237,0.4), transparent);
-    }
-
-    /* ── Tag chip ── */
-    .chip {
-      display: inline-block; padding: 4px 14px;
-      border: 1px solid rgba(124,58,237,0.4);
-      border-radius: 100px;
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.65rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase;
-      color: #A78BFA;
-    }
-
-    /* ── Reveal states ── */
-    .reveal        { opacity: 0; transform: translateY(50px); }
-    .reveal-left   { opacity: 0; transform: translateX(-50px); }
-    .reveal-right  { opacity: 0; transform: translateX(50px); }
-
-    /* ── Hero initial ── */
-    #heroEye, #heroSub, #heroBtns, #heroBadge { opacity: 0; }
-
-    /* ── Mobile drawer ── */
-    #mobileDrawer {
-      position: fixed; inset: 0; z-index: 290;
-      background: rgba(11,15,47,0.97);
-      backdrop-filter: blur(24px);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2.2rem;
-      opacity: 0; pointer-events: none; transition: opacity 0.35s;
-    }
-    #mobileDrawer.open { opacity: 1; pointer-events: all; }
-
-    /* ── Scroll hint ── */
-    .scroll-dot {
-      width: 6px; height: 6px; background: #7C3AED; border-radius: 50%;
-      animation: scrollBounce 1.8s ease-in-out infinite;
-    }
-    @keyframes scrollBounce {
-      0%,100% { transform: translateY(0); opacity: 1; }
-      50%      { transform: translateY(12px); opacity: 0.3; }
-    }
-
-    /* ── Testi card ── */
-    .testi-stars { color: #7C3AED; letter-spacing: 2px; font-size: 0.85rem; }
-  </style>
+    </script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0B0F2F;
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        /* Glassmorphism Navbar */
+        .glass-nav {
+            background: rgba(11, 15, 47, 0.8);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #7C3AED, #A78BFA);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        /* Animated Gradient Background */
+        .gradient-bg {
+            background: linear-gradient(135deg, #0B0F2F 0%, #4C1D95 50%, #0B0F2F 100%);
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        /* Glow Effect */
+        .glow {
+            box-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
+        }
+        
+        .glow-hover {
+            transition: all 0.3s ease;
+        }
+        
+        .glow-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.6);
+        }
+        
+        /* Card Styles */
+        .service-card {
+            background: rgba(76, 29, 149, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+        
+        .service-card:hover {
+            background: rgba(76, 29, 149, 0.2);
+            border-color: rgba(124, 58, 237, 0.6);
+        }
+        
+        /* Button Styles */
+        .btn-primary {
+            background: linear-gradient(135deg, #7C3AED, #A78BFA);
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(124, 58, 237, 0.5);
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: white;
+            padding: 16px 32px;
+            border-radius: 12px;
+            border: 2px solid rgba(124, 58, 237, 0.5);
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn-secondary:hover {
+            border-color: #7C3AED;
+            background: rgba(124, 58, 237, 0.1);
+        }
+        
+        /* Typewriter Cursor */
+        .typewriter {
+            border-right: 2px solid #7C3AED;
+            animation: blink 1s step-end infinite;
+        }
+        
+        @keyframes blink {
+            50% { border-color: transparent; }
+        }
+        
+        /* Particles */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(124, 58, 237, 0.5);
+            border-radius: 50%;
+            animation: float 20s infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-100px) translateX(100px); }
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+        
+        .mobile-menu.active {
+            transform: translateX(0);
+        }
+        
+        /* Stats Counter */
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #7C3AED;
+        }
+    </style>
 </head>
 <body>
-
-<!-- ══════════════════════════════════════
-     NAVIGATION
-══════════════════════════════════════ -->
-<nav id="navbar">
-  <div class="max-w-7xl mx-auto flex items-center justify-between" style="height:68px;">
-
-    <a href="#hero" style="display:flex; align-items:center; gap:10px; text-decoration:none;">
-      <div style="width:32px; height:32px; background:linear-gradient(135deg,#7C3AED,#4C1D95); border-radius:8px; display:flex; align-items:center; justify-content:center;">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M2 12L8 2L14 12H2Z" fill="white" opacity="0.9"/>
-        </svg>
-      </div>
-      <span style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700; color:#fff; letter-spacing:-0.01em;">Adsprint</span>
-    </a>
-
-    <ul class="hidden md:flex items-center gap-9">
-      <li><a href="#about"    class="nav-link">About</a></li>
-      <li><a href="#services" class="nav-link">Services</a></li>
-      <li><a href="#process"  class="nav-link">Process</a></li>
-      <li><a href="#contact"  class="nav-link">Contact</a></li>
-      <li>
-        <a href="#contact" class="btn-primary" style="padding:10px 24px; font-size:0.72rem;"><span>Start a Project</span></a>
-      </li>
-    </ul>
-
-    <button id="burgerBtn" class="md:hidden flex flex-col gap-1.5 p-2 z-10" aria-label="Menu">
-      <span class="block h-px bg-white transition-all" style="width:24px;"></span>
-      <span class="block h-px bg-white transition-all" style="width:16px;"></span>
-      <span class="block h-px bg-white transition-all" style="width:24px;"></span>
-    </button>
-  </div>
-</nav>
-
-<!-- Mobile drawer -->
-<div id="mobileDrawer">
-  <button id="closeDrawer" style="position:absolute; top:1.5rem; right:1.5rem; background:none; border:none; cursor:pointer; color:rgba(255,255,255,0.4); font-size:1.5rem; line-height:1;">✕</button>
-  <a href="#about"    class="nav-link" style="font-size:1rem;">About</a>
-  <a href="#services" class="nav-link" style="font-size:1rem;">Services</a>
-  <a href="#process"  class="nav-link" style="font-size:1rem;">Process</a>
-  <a href="#contact"  class="nav-link" style="font-size:1rem;">Contact</a>
-  <a href="#contact"  class="btn-primary" style="margin-top:0.5rem;"><span>Start a Project</span></a>
-</div>
-
-
-<!-- ══════════════════════════════════════
-     HERO
-══════════════════════════════════════ -->
-<section id="hero">
-  <div class="orb orb-1"></div>
-  <div class="orb orb-2"></div>
-  <div class="orb orb-3"></div>
-  <div class="grid-lines"></div>
-
-  <!-- Animated ring -->
-  <div style="position:absolute; width:700px; height:700px; border:1px solid rgba(124,58,237,0.1); border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none;" id="ring1"></div>
-  <div style="position:absolute; width:500px; height:500px; border:1px solid rgba(124,58,237,0.08); border-radius:50%; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none;" id="ring2"></div>
-
-  <div style="position:relative; z-index:10; text-align:center; padding:0 clamp(1rem,5vw,2rem); max-width:900px; margin:0 auto;">
-
-    <div id="heroBadge" style="margin-bottom:2rem;">
-      <span class="chip">Digital Agency — Est. 2024</span>
-    </div>
-
-    <p id="heroEye" style="font-family:'Space Grotesk',sans-serif; font-size:0.68rem; letter-spacing:0.3em; text-transform:uppercase; color:rgba(167,139,250,0.7); margin-bottom:1.4rem;">
-      Premium Web Design &amp; AI Automation
-    </p>
-
-    <h1 style="font-family:'Space Grotesk',sans-serif; font-size:clamp(2.2rem,6.5vw,5.5rem); font-weight:700; line-height:1.05; letter-spacing:-0.02em; margin-bottom:1.8rem; min-height:1.2em;">
-      <span id="typeTarget"></span><span class="cursor-blink" id="typeCursor"></span>
-    </h1>
-
-    <p id="heroSub" style="font-family:'Inter',sans-serif; font-size:clamp(0.95rem,1.8vw,1.15rem); font-weight:300; color:rgba(255,255,255,0.5); line-height:1.8; max-width:520px; margin:0 auto 2.8rem;">
-      Premium digital experiences for modern brands that want to dominate their market.
-    </p>
-
-    <div id="heroBtns" style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; align-items:center;">
-      <a href="#services" class="btn-primary"><span>View Our Work</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="position:relative;z-index:1;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <a href="#contact" class="btn-outline">Start a Project</a>
-    </div>
-
-  </div>
-
-  <!-- Scroll hint -->
-  <div style="position:absolute; bottom:2.5rem; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:0.6rem; z-index:10; opacity:0;" id="scrollHint">
-    <span style="font-family:'Space Grotesk',sans-serif; font-size:0.58rem; letter-spacing:0.3em; text-transform:uppercase; color:rgba(255,255,255,0.25);">Scroll</span>
-    <div style="width:1px; height:40px; background:linear-gradient(to bottom, rgba(124,58,237,0.6), transparent);"></div>
-    <div class="scroll-dot"></div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════════
-     ABOUT
-══════════════════════════════════════ -->
-<section id="about" style="padding:clamp(5rem,10vw,9rem) clamp(1.5rem,5vw,4rem); background:linear-gradient(180deg,#0B0F2F 0%,#100828 100%); position:relative; overflow:hidden;">
-  <div style="position:absolute; width:400px; height:400px; background:rgba(124,58,237,0.07); border-radius:50%; filter:blur(80px); top:-100px; right:10%; pointer-events:none;"></div>
-
-  <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-
-    <!-- Text -->
-    <div class="reveal-left">
-      <span class="chip mb-6 inline-block">About Adsprint</span>
-      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:700; line-height:1.1; letter-spacing:-0.02em; margin-bottom:1.5rem;">
-        We Build Websites That<br/><span class="grad-text">Actually Convert.</span>
-      </h2>
-      <div class="divider" style="margin-bottom:2rem; max-width:80px;"></div>
-      <p style="font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:300; color:rgba(255,255,255,0.5); line-height:1.95; margin-bottom:1.2rem;">
-        Adsprint is a high-performance digital agency built for ambitious brands. We don't just make websites look beautiful — we engineer them to drive measurable growth, generate leads, and convert visitors into loyal customers.
-      </p>
-      <p style="font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:300; color:rgba(255,255,255,0.5); line-height:1.95; margin-bottom:2.5rem;">
-        From luxury hospitality to cutting-edge SaaS, we combine strategic thinking with pixel-perfect execution to deliver digital experiences that stand apart.
-      </p>
-      <div style="display:flex; gap:2.5rem;">
-        <div>
-          <p style="font-family:'Space Grotesk',sans-serif; font-size:2.2rem; font-weight:700; background:linear-gradient(135deg,#A78BFA,#7C3AED); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">40+</p>
-          <p style="font-family:'Inter',sans-serif; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:0.3rem;">Projects Delivered</p>
+    
+    <!-- Navigation -->
+    <nav class="glass-nav fixed w-full top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-heading font-bold gradient-text">Adsprint</a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="text-white hover:text-purple-400 transition font-medium">Home</a>
+                    <a href="services.html" class="text-white hover:text-purple-400 transition font-medium">Services</a>
+                    <a href="process.html" class="text-white hover:text-purple-400 transition font-medium">Process</a>
+                    <a href="contact.html" class="text-white hover:text-purple-400 transition font-medium">Contact</a>
+                </div>
+                
+                <!-- Mobile Toggle -->
+                <button class="md:hidden text-white" id="mobile-toggle">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
         </div>
-        <div>
-          <p style="font-family:'Space Grotesk',sans-serif; font-size:2.2rem; font-weight:700; background:linear-gradient(135deg,#A78BFA,#7C3AED); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">98%</p>
-          <p style="font-family:'Inter',sans-serif; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:0.3rem;">Client Satisfaction</p>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu fixed top-0 right-0 w-64 h-full bg-primary shadow-2xl md:hidden" id="mobile-menu">
+            <div class="p-6">
+                <button class="text-white mb-8" id="mobile-close">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+                <div class="flex flex-col space-y-4">
+                    <a href="index.html" class="text-white hover:text-purple-400 transition text-lg">Home</a>
+                    <a href="services.html" class="text-white hover:text-purple-400 transition text-lg">Services</a>
+                    <a href="process.html" class="text-white hover:text-purple-400 transition text-lg">Process</a>
+                    <a href="contact.html" class="text-white hover:text-purple-400 transition text-lg">Contact</a>
+                </div>
+            </div>
         </div>
-        <div>
-          <p style="font-family:'Space Grotesk',sans-serif; font-size:2.2rem; font-weight:700; background:linear-gradient(135deg,#A78BFA,#7C3AED); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; line-height:1;">3x</p>
-          <p style="font-family:'Inter',sans-serif; font-size:0.72rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:0.3rem;">Avg. Conversion Lift</p>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="gradient-bg min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+        <div class="particles" id="particles"></div>
+        
+        <div class="max-w-7xl mx-auto px-6 text-center relative z-10">
+            <h1 class="font-heading text-5xl md:text-7xl font-bold mb-6 hero-title">
+                <span class="typewriter">Strategic Websites for Modern Businesses</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-300 mb-12 max-w-3xl mx-auto hero-subtitle">
+                We design powerful digital experiences that help businesses grow online.
+            </p>
+            <div class="flex flex-col sm:flex-row gap-4 justify-center hero-cta">
+                <a href="services.html" class="btn-primary">View Services</a>
+                <a href="contact.html" class="btn-secondary">Start a Project</a>
+            </div>
         </div>
-      </div>
-    </div>
-
-    <!-- Image -->
-    <div class="reveal-right" style="position:relative;">
-      <div style="border-radius:16px; overflow:hidden; aspect-ratio:4/5; box-shadow:0 40px 100px rgba(124,58,237,0.25);">
-        <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=900&auto=format&fit=crop" alt="Adsprint team" loading="lazy" style="width:100%; height:100%; object-fit:cover; display:block; transition:transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94);" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'" />
-      </div>
-      <div class="glass" style="position:absolute; bottom:-1.5rem; left:-1.5rem; padding:1.2rem 1.6rem; min-width:190px;">
-        <p style="font-family:'Space Grotesk',sans-serif; font-size:1.5rem; font-weight:700; color:#A78BFA; line-height:1;">24h</p>
-        <p style="font-family:'Inter',sans-serif; font-size:0.68rem; letter-spacing:0.1em; text-transform:uppercase; color:rgba(255,255,255,0.35); margin-top:0.3rem;">Avg. Response Time</p>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════════
-     SERVICES
-══════════════════════════════════════ -->
-<section id="services" style="padding:clamp(5rem,10vw,9rem) clamp(1.5rem,5vw,4rem); background:#0D1035; position:relative; overflow:hidden;">
-  <div style="position:absolute; width:600px; height:600px; background:rgba(76,29,149,0.12); border-radius:50%; filter:blur(100px); bottom:-200px; left:50%; transform:translateX(-50%); pointer-events:none;"></div>
-
-  <div class="max-w-7xl mx-auto">
-
-    <div class="reveal text-center" style="margin-bottom:4rem;">
-      <span class="chip" style="margin-bottom:1.2rem; display:inline-block;">What We Do</span>
-      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:700; line-height:1.1; letter-spacing:-0.02em; margin-bottom:1rem;">
-        Services Built for <span class="grad-text">Growth</span>
-      </h2>
-      <p style="font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:300; color:rgba(255,255,255,0.4); max-width:460px; margin:0 auto; line-height:1.8;">
-        Every service we offer is engineered to make your brand impossible to ignore online.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-
-      <!-- Card 1 -->
-      <div class="glass svc-card" style="padding:2rem;">
-        <div class="svc-icon mb-5">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="1.6" stroke-linecap="round">
-            <rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/>
-          </svg>
+    </section>
+    
+    <!-- About Adsprint -->
+    <section class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6 gradient-text">About Adsprint</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Adsprint builds modern, fast, and strategic websites for businesses that want to grow online. 
+                    We focus on digital positioning, premium design, and growth-driven strategy.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 stagger-cards">
+                <div class="service-card p-8 rounded-2xl glow-hover">
+                    <div class="text-5xl mb-4">🎯</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Digital Positioning</h3>
+                    <p class="text-gray-300">Strategic online presence that sets you apart from competitors.</p>
+                </div>
+                
+                <div class="service-card p-8 rounded-2xl glow-hover">
+                    <div class="text-5xl mb-4">💎</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Premium Design</h3>
+                    <p class="text-gray-300">Beautiful, modern interfaces that captivate your audience.</p>
+                </div>
+                
+                <div class="service-card p-8 rounded-2xl glow-hover">
+                    <div class="text-5xl mb-4">📈</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Growth Strategy</h3>
+                    <p class="text-gray-300">Data-driven approach to maximize your digital growth.</p>
+                </div>
+            </div>
         </div>
-        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:600; color:#fff; margin-bottom:0.8rem;">Website Design</h3>
-        <p style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:300; color:rgba(255,255,255,0.45); line-height:1.85;">
-          Pixel-perfect, conversion-focused websites built with cutting-edge technology and cinematic animations.
-        </p>
-        <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.06);">
-          <a href="#contact" style="font-family:'Space Grotesk',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#7C3AED; text-decoration:none; display:flex; align-items:center; gap:6px; transition:color 0.3s;">
-            Learn More
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
+    </section>
+    
+    <!-- Services Preview -->
+    <section class="py-24 px-6 bg-gradient-to-b from-primary to-secondary">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6 gradient-text">Our Services</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    Comprehensive digital solutions designed to elevate your business.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8 stagger-cards">
+                <div class="service-card p-8 rounded-2xl glow-hover">
+                    <div class="text-5xl mb-4">🎨</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Website Design</h3>
+                    <p class="text-gray-300">Premium websites built for conversions and performance.</p>
+                </div>
+                
+                <div class="service-card p-8 rounded-2xl glow-hover">
+                    <div class="text-5xl mb-4">🏨</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Hospitality Websites</h3>
+                    <p class="text-gray-300">Luxury websites for villas, hotels, and restaurants.</p>
+                </div>
+                
+                <div class="service-card p-8 rounded-2xl glow-hover">
+                    <div class="text-5xl mb-4">🔍</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">SEO Optimization</h3>
+                    <p class="text-gray-300">Improve rankings and attract organic traffic.</p>
+                </div>
+                
+                <div class="service-card p-8 rounded-2xl glow-hover">
+                    <div class="text-5xl mb-4">⚡</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Automation Systems</h3>
+                    <p class="text-gray-300">Smart booking and inquiry automation.</p>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="services.html" class="btn-primary">Explore All Services</a>
+            </div>
         </div>
-      </div>
-
-      <!-- Card 2 -->
-      <div class="glass svc-card" style="padding:2rem;">
-        <div class="svc-icon mb-5">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="1.6" stroke-linecap="round">
-            <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><path d="M9 22V12h6v10"/>
-          </svg>
+    </section>
+    
+    <!-- Technology Stack -->
+    <section class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6 gradient-text">Modern Technology Stack</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    We build websites using high-performance technologies focused on speed, reliability, and scalability.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 stagger-cards">
+                <div class="service-card p-8 rounded-2xl text-center glow-hover">
+                    <div class="text-6xl mb-4">⚡</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Lightning Fast</h3>
+                    <p class="text-gray-300">Optimized for speed with sub-second load times.</p>
+                </div>
+                
+                <div class="service-card p-8 rounded-2xl text-center glow-hover">
+                    <div class="text-6xl mb-4">🔒</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Secure & Reliable</h3>
+                    <p class="text-gray-300">Enterprise-grade security and 99.9% uptime.</p>
+                </div>
+                
+                <div class="service-card p-8 rounded-2xl text-center glow-hover">
+                    <div class="text-6xl mb-4">📱</div>
+                    <h3 class="font-heading text-2xl font-bold mb-4">Fully Responsive</h3>
+                    <p class="text-gray-300">Perfect experience on all devices and screens.</p>
+                </div>
+            </div>
         </div>
-        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:600; color:#fff; margin-bottom:0.8rem;">Hospitality Websites</h3>
-        <p style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:300; color:rgba(255,255,255,0.45); line-height:1.85;">
-          Luxury hotel and villa websites with direct booking integration, designed to drive maximum reservations.
-        </p>
-        <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.06);">
-          <a href="#contact" style="font-family:'Space Grotesk',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#7C3AED; text-decoration:none; display:flex; align-items:center; gap:6px; transition:color 0.3s;">
-            Learn More
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
+    </section>
+    
+    <!-- Opportunity-Driven Strategy -->
+    <section class="py-24 px-6 bg-gradient-to-b from-secondary to-primary">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 fade-in">
+                <h2 class="font-heading text-4xl md:text-5xl font-bold mb-6 gradient-text">Capture Online Opportunities</h2>
+                <p class="text-xl text-gray-300 max-w-3xl mx-auto">
+                    We help businesses unlock digital growth and capture market opportunities.
+                </p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-12 text-center stagger-cards">
+                <div>
+                    <div class="stat-number mb-2" data-target="250">0</div>
+                    <p class="text-xl text-gray-300">Projects Delivered</p>
+                </div>
+                <div>
+                    <div class="stat-number mb-2" data-target="98">0</div>
+                    <p class="text-xl text-gray-300">Client Satisfaction</p>
+                </div>
+                <div>
+                    <div class="stat-number mb-2" data-target="5">0</div>
+                    <p class="text-xl text-gray-300">Years of Excellence</p>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="glass svc-card" style="padding:2rem; position:relative; overflow:hidden;">
-        <div style="position:absolute; top:-20px; right:-20px; width:100px; height:100px; background:rgba(124,58,237,0.15); border-radius:50%; filter:blur(20px); pointer-events:none;"></div>
-        <div class="svc-icon mb-5">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="1.6" stroke-linecap="round">
-            <circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M4.22 4.22l2.12 2.12M17.66 17.66l2.12 2.12M2 12h3M19 12h3M4.22 19.78l2.12-2.12M17.66 6.34l2.12-2.12"/>
-          </svg>
+    </section>
+    
+    <!-- Powerful CTA -->
+    <section class="py-24 px-6">
+        <div class="max-w-4xl mx-auto text-center fade-in">
+            <h2 class="font-heading text-4xl md:text-6xl font-bold mb-6 gradient-text">Ready to Transform Your Digital Presence?</h2>
+            <p class="text-xl text-gray-300 mb-12">
+                Let's build something extraordinary together. Start your project with Adsprint today.
+            </p>
+            <a href="contact.html" class="btn-primary text-lg px-12 py-4">Start Your Project</a>
         </div>
-        <div style="position:absolute; top:1.5rem; right:1.5rem;">
-          <span style="font-family:'Space Grotesk',sans-serif; font-size:0.55rem; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; background:linear-gradient(135deg,#7C3AED,#4C1D95); padding:3px 10px; border-radius:100px; color:white;">New</span>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="py-12 px-6 border-t border-purple-900/30">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h3 class="font-heading text-2xl font-bold gradient-text mb-4">Adsprint</h3>
+                    <p class="text-gray-400">Strategic websites for modern businesses.</p>
+                </div>
+                <div>
+                    <h4 class="font-heading font-bold mb-4">Services</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="services.html" class="hover:text-purple-400 transition">Website Design</a></li>
+                        <li><a href="services.html" class="hover:text-purple-400 transition">SEO Optimization</a></li>
+                        <li><a href="services.html" class="hover:text-purple-400 transition">Automation</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-heading font-bold mb-4">Company</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="index.html" class="hover:text-purple-400 transition">About</a></li>
+                        <li><a href="process.html" class="hover:text-purple-400 transition">Process</a></li>
+                        <li><a href="contact.html" class="hover:text-purple-400 transition">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-heading font-bold mb-4">Connect</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li><a href="#" class="hover:text-purple-400 transition">LinkedIn</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition">Twitter</a></li>
+                        <li><a href="#" class="hover:text-purple-400 transition">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="text-center text-gray-400 pt-8 border-t border-purple-900/30">
+                <p>&copy; 2025 Adsprint. All rights reserved.</p>
+            </div>
         </div>
-        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:600; color:#fff; margin-bottom:0.8rem;">AI Automation</h3>
-        <p style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:300; color:rgba(255,255,255,0.45); line-height:1.85;">
-          AI-powered chatbots, WhatsApp automation, and smart booking systems that work 24/7 on your behalf.
-        </p>
-        <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.06);">
-          <a href="#contact" style="font-family:'Space Grotesk',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#7C3AED; text-decoration:none; display:flex; align-items:center; gap:6px;">
-            Learn More
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-        </div>
-      </div>
-
-      <!-- Card 4 -->
-      <div class="glass svc-card" style="padding:2rem;">
-        <div class="svc-icon mb-5">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#A78BFA" stroke-width="1.6" stroke-linecap="round">
-            <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
-          </svg>
-        </div>
-        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:600; color:#fff; margin-bottom:0.8rem;">Conversion Optimisation</h3>
-        <p style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:300; color:rgba(255,255,255,0.45); line-height:1.85;">
-          Data-driven UX improvements, A/B testing, and funnel optimisation to turn more visitors into paying clients.
-        </p>
-        <div style="margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid rgba(255,255,255,0.06);">
-          <a href="#contact" style="font-family:'Space Grotesk',sans-serif; font-size:0.72rem; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#7C3AED; text-decoration:none; display:flex; align-items:center; gap:6px;">
-            Learn More
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════════
-     PROCESS
-══════════════════════════════════════ -->
-<section id="process" style="padding:clamp(5rem,10vw,9rem) clamp(1.5rem,5vw,4rem); background:linear-gradient(180deg,#0D1035 0%,#0B0F2F 100%); position:relative; overflow:hidden;">
-
-  <div class="max-w-7xl mx-auto">
-
-    <div class="reveal text-center" style="margin-bottom:5rem;">
-      <span class="chip" style="margin-bottom:1.2rem; display:inline-block;">How We Work</span>
-      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:700; line-height:1.1; letter-spacing:-0.02em; margin-bottom:1rem;">
-        Three Steps to <span class="grad-text">Launch</span>
-      </h2>
-      <p style="font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:300; color:rgba(255,255,255,0.4); max-width:420px; margin:0 auto; line-height:1.8;">
-        A streamlined process that moves fast without cutting corners.
-      </p>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-
-      <!-- Connector line desktop -->
-      <div class="hidden md:block" style="position:absolute; top:2.6rem; left:calc(16.66% + 2rem); right:calc(16.66% + 2rem); height:1px; background:linear-gradient(to right, rgba(124,58,237,0.5), rgba(124,58,237,0.2), rgba(124,58,237,0.5)); z-index:0;"></div>
-
-      <!-- Step 1 -->
-      <div class="reveal glass" style="padding:2.5rem; position:relative; z-index:1;">
-        <div style="width:52px; height:52px; border:2px solid #7C3AED; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:1.8rem; background:#0B0F2F; position:relative;">
-          <span style="font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:700; color:#A78BFA;">01</span>
-          <div style="position:absolute; inset:-6px; border-radius:50%; border:1px solid rgba(124,58,237,0.2);"></div>
-        </div>
-        <p style="font-family:'Space Grotesk',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:#7C3AED; margin-bottom:0.7rem;">Discovery</p>
-        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:1rem;">Understand</h3>
-        <p style="font-family:'Inter',sans-serif; font-size:0.84rem; font-weight:300; color:rgba(255,255,255,0.45); line-height:1.85;">
-          We deep-dive into your brand, audience, competitors, and goals. No templates — every strategy is custom-built for your exact market position.
-        </p>
-      </div>
-
-      <!-- Step 2 -->
-      <div class="reveal glass" style="padding:2.5rem; position:relative; z-index:1; margin-top:0; border-color:rgba(124,58,237,0.3);">
-        <div style="position:absolute; inset:0; border-radius:12px; background:linear-gradient(135deg, rgba(124,58,237,0.06), transparent); pointer-events:none;"></div>
-        <div style="width:52px; height:52px; background:linear-gradient(135deg,#7C3AED,#4C1D95); border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:1.8rem; position:relative; box-shadow:0 0 24px rgba(124,58,237,0.4);">
-          <span style="font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:700; color:#fff;">02</span>
-        </div>
-        <p style="font-family:'Space Grotesk',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:#7C3AED; margin-bottom:0.7rem;">Design</p>
-        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:1rem;">Create</h3>
-        <p style="font-family:'Inter',sans-serif; font-size:0.84rem; font-weight:300; color:rgba(255,255,255,0.45); line-height:1.85;">
-          Our designers craft world-class visuals with immersive interactions, animations, and layouts that stop visitors in their tracks.
-        </p>
-      </div>
-
-      <!-- Step 3 -->
-      <div class="reveal glass" style="padding:2.5rem; position:relative; z-index:1;">
-        <div style="width:52px; height:52px; border:2px solid #7C3AED; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:1.8rem; background:#0B0F2F; position:relative;">
-          <span style="font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:700; color:#A78BFA;">03</span>
-          <div style="position:absolute; inset:-6px; border-radius:50%; border:1px solid rgba(124,58,237,0.2);"></div>
-        </div>
-        <p style="font-family:'Space Grotesk',sans-serif; font-size:0.65rem; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:#7C3AED; margin-bottom:0.7rem;">Launch</p>
-        <h3 style="font-family:'Space Grotesk',sans-serif; font-size:1.3rem; font-weight:700; color:#fff; margin-bottom:1rem;">Deliver</h3>
-        <p style="font-family:'Inter',sans-serif; font-size:0.84rem; font-weight:300; color:rgba(255,255,255,0.45); line-height:1.85;">
-          We deploy, optimise, and hand over a fully battle-tested product — with post-launch support to ensure peak performance.
-        </p>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════════
-     WORK SHOWCASE
-══════════════════════════════════════ -->
-<section style="padding:clamp(5rem,10vw,9rem) clamp(1.5rem,5vw,4rem); background:#0B0F2F; position:relative; overflow:hidden;">
-  <div style="position:absolute; width:500px; height:500px; background:rgba(124,58,237,0.07); border-radius:50%; filter:blur(90px); top:0; right:-100px; pointer-events:none;"></div>
-
-  <div class="max-w-7xl mx-auto">
-    <div class="reveal text-center" style="margin-bottom:4rem;">
-      <span class="chip" style="margin-bottom:1.2rem; display:inline-block;">Our Work</span>
-      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:700; line-height:1.1; letter-spacing:-0.02em;">
-        Built to <span class="grad-text">Impress</span>
-      </h2>
-    </div>
-
-    <div style="display:grid; grid-template-columns:repeat(12,1fr); grid-auto-rows:240px; gap:16px;">
-
-      <div class="reveal" style="grid-column:span 8; border-radius:12px; overflow:hidden; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-        <img src="https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?w=1200&auto=format&fit=crop" alt="Web design" loading="lazy" style="width:100%; height:100%; object-fit:cover; transition:transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); display:block;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'" />
-        <div style="position:absolute; inset:0; background:linear-gradient(to top,rgba(11,15,47,0.7),transparent); pointer-events:none;"></div>
-        <div style="position:absolute; bottom:1.5rem; left:1.5rem;">
-          <p style="font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:600; color:#fff;">Luxury Villa — Goa</p>
-          <p style="font-family:'Inter',sans-serif; font-size:0.72rem; color:rgba(255,255,255,0.45);">Website Design · Booking System</p>
-        </div>
-      </div>
-
-      <div class="reveal" style="grid-column:span 4; border-radius:12px; overflow:hidden; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-        <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&auto=format&fit=crop" alt="Tech project" loading="lazy" style="width:100%; height:100%; object-fit:cover; transition:transform 0.7s; display:block;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'" />
-        <div style="position:absolute; inset:0; background:linear-gradient(to top,rgba(11,15,47,0.7),transparent); pointer-events:none;"></div>
-        <div style="position:absolute; bottom:1.5rem; left:1.5rem;">
-          <p style="font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:600; color:#fff;">SaaS Platform</p>
-          <p style="font-family:'Inter',sans-serif; font-size:0.72rem; color:rgba(255,255,255,0.45);">UI/UX · Development</p>
-        </div>
-      </div>
-
-      <div class="reveal" style="grid-column:span 4; border-radius:12px; overflow:hidden; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-        <img src="https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800&auto=format&fit=crop" alt="Agency" loading="lazy" style="width:100%; height:100%; object-fit:cover; transition:transform 0.7s; display:block;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'" />
-        <div style="position:absolute; inset:0; background:linear-gradient(to top,rgba(11,15,47,0.7),transparent); pointer-events:none;"></div>
-        <div style="position:absolute; bottom:1.5rem; left:1.5rem;">
-          <p style="font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:600; color:#fff;">Real Estate Portal</p>
-          <p style="font-family:'Inter',sans-serif; font-size:0.72rem; color:rgba(255,255,255,0.45);">Website · AI Chat</p>
-        </div>
-      </div>
-
-      <div class="reveal" style="grid-column:span 8; border-radius:12px; overflow:hidden; position:relative; box-shadow:0 20px 60px rgba(0,0,0,0.4);">
-        <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&auto=format&fit=crop" alt="Dashboard" loading="lazy" style="width:100%; height:100%; object-fit:cover; transition:transform 0.7s; display:block;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'" />
-        <div style="position:absolute; inset:0; background:linear-gradient(to top,rgba(11,15,47,0.7),transparent); pointer-events:none;"></div>
-        <div style="position:absolute; bottom:1.5rem; left:1.5rem;">
-          <p style="font-family:'Space Grotesk',sans-serif; font-size:1rem; font-weight:600; color:#fff;">Analytics Dashboard</p>
-          <p style="font-family:'Inter',sans-serif; font-size:0.72rem; color:rgba(255,255,255,0.45);">UI Design · Development</p>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════════
-     TESTIMONIALS
-══════════════════════════════════════ -->
-<section id="testimonials" style="padding:clamp(5rem,10vw,9rem) clamp(1.5rem,5vw,4rem); background:linear-gradient(180deg,#0B0F2F,#0D1035); position:relative; overflow:hidden;">
-  <div style="position:absolute; width:400px; height:400px; background:rgba(124,58,237,0.08); border-radius:50%; filter:blur(80px); bottom:0; left:50%; transform:translateX(-50%); pointer-events:none;"></div>
-
-  <div class="max-w-6xl mx-auto">
-    <div class="reveal text-center" style="margin-bottom:4rem;">
-      <span class="chip" style="margin-bottom:1.2rem; display:inline-block;">Client Love</span>
-      <h2 style="font-family:'Space Grotesk',sans-serif; font-size:clamp(2rem,4vw,3.2rem); font-weight:700; line-height:1.1; letter-spacing:-0.02em;">
-        What Our Clients <span class="grad-text">Say</span>
-      </h2>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-
-      <div class="reveal glass" style="padding:2.2rem;">
-        <p class="testi-stars" style="margin-bottom:1rem;">★★★★★</p>
-        <p style="font-family:'Inter',sans-serif; font-size:0.88rem; font-weight:300; color:rgba(255,255,255,0.6); line-height:1.85; margin-bottom:1.8rem; font-style:italic;">
-          "Adsprint completely transformed our online presence. The website they built for our resort tripled our direct booking rate within 3 months."
-        </p>
-        <div style="display:flex; align-items:center; gap:12px;">
-          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=80" alt="" loading="lazy" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid rgba(124,58,237,0.4);" />
-          <div>
-            <p style="font-family:'Space Grotesk',sans-serif; font-size:0.82rem; font-weight:600; color:#fff;">Priya Sharma</p>
-            <p style="font-family:'Inter',sans-serif; font-size:0.66rem; color:rgba(255,255,255,0.3); letter-spacing:0.08em;">Founder, Serenity Resorts</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="reveal glass" style="padding:2.2rem; border-color:rgba(124,58,237,0.3);">
-        <div style="position:absolute; inset:0; border-radius:12px; background:linear-gradient(135deg,rgba(124,58,237,0.05),transparent); pointer-events:none; border-radius:12px;"></div>
-        <p class="testi-stars" style="margin-bottom:1rem;">★★★★★</p>
-        <p style="font-family:'Inter',sans-serif; font-size:0.88rem; font-weight:300; color:rgba(255,255,255,0.6); line-height:1.85; margin-bottom:1.8rem; font-style:italic;">
-          "The AI automation they built for us saves our team 20+ hours a week. The WhatsApp bot alone has closed deals we would have missed."
-        </p>
-        <div style="display:flex; align-items:center; gap:12px;">
-          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=80" alt="" loading="lazy" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid rgba(124,58,237,0.4);" />
-          <div>
-            <p style="font-family:'Space Grotesk',sans-serif; font-size:0.82rem; font-weight:600; color:#fff;">Rohan Mehta</p>
-            <p style="font-family:'Inter',sans-serif; font-size:0.66rem; color:rgba(255,255,255,0.3); letter-spacing:0.08em;">CEO, Proptech Ventures</p>
-          </div>
-        </div>
-      </div>
-
-      <div class="reveal glass" style="padding:2.2rem;">
-        <p class="testi-stars" style="margin-bottom:1rem;">★★★★★</p>
-        <p style="font-family:'Inter',sans-serif; font-size:0.88rem; font-weight:300; color:rgba(255,255,255,0.6); line-height:1.85; margin-bottom:1.8rem; font-style:italic;">
-          "From day one Adsprint felt like a partner, not a vendor. The attention to detail in our site is something our competitors simply cannot match."
-        </p>
-        <div style="display:flex; align-items:center; gap:12px;">
-          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=80" alt="" loading="lazy" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid rgba(124,58,237,0.4);" />
-          <div>
-            <p style="font-family:'Space Grotesk',sans-serif; font-size:0.82rem; font-weight:600; color:#fff;">Ananya Patel</p>
-            <p style="font-family:'Inter',sans-serif; font-size:0.66rem; color:rgba(255,255,255,0.3); letter-spacing:0.08em;">Director, Bloom Agency</p>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════════
-     CTA
-══════════════════════════════════════ -->
-<section id="contact" style="padding:clamp(6rem,12vw,10rem) clamp(1.5rem,5vw,4rem); background:#0D1035; position:relative; overflow:hidden;">
-  <div style="position:absolute; inset:0; background:radial-gradient(ellipse 70% 60% at 50% 50%, rgba(124,58,237,0.12), transparent); pointer-events:none;"></div>
-  <div style="position:absolute; width:1px; height:100%; background:linear-gradient(to bottom,transparent,rgba(124,58,237,0.3),transparent); left:20%; top:0; pointer-events:none;"></div>
-  <div style="position:absolute; width:1px; height:100%; background:linear-gradient(to bottom,transparent,rgba(124,58,237,0.3),transparent); right:20%; top:0; pointer-events:none;"></div>
-
-  <div class="max-w-3xl mx-auto text-center reveal" style="position:relative; z-index:10;">
-    <span class="chip" style="margin-bottom:1.5rem; display:inline-block;">Get Started</span>
-    <h2 style="font-family:'Space Grotesk',sans-serif; font-size:clamp(2.2rem,5vw,4rem); font-weight:700; line-height:1.05; letter-spacing:-0.02em; margin-bottom:1.5rem;">
-      Ready to Build<br/>Something <span class="grad-text">Exceptional?</span>
-    </h2>
-    <p style="font-family:'Inter',sans-serif; font-size:0.9rem; font-weight:300; color:rgba(255,255,255,0.45); line-height:1.9; margin-bottom:3rem; max-width:480px; margin-left:auto; margin-right:auto;">
-      Tell us about your project and we'll get back to you within 24 hours with a custom proposal tailored to your goals.
-    </p>
-    <div style="display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; margin-bottom:2.5rem;">
-      <a href="mailto:hello@adsprint.in" class="btn-primary"><span>Start a Project</span>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="position:relative;z-index:1;"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <a href="https://wa.me/919800000000" target="_blank" rel="noopener noreferrer" class="btn-outline">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-        WhatsApp Us
-      </a>
-    </div>
-    <p style="font-family:'Inter',sans-serif; font-size:0.72rem; color:rgba(255,255,255,0.2); letter-spacing:0.08em;">
-      hello@adsprint.in &nbsp;·&nbsp; Response within 24 hours
-    </p>
-  </div>
-</section>
-
-
-<!-- ══════════════════════════════════════
-     FOOTER
-══════════════════════════════════════ -->
-<footer style="background:#080B22; padding:clamp(3rem,6vw,5rem) clamp(1.5rem,5vw,4rem) 2rem; border-top:1px solid rgba(124,58,237,0.12);">
-  <div class="max-w-7xl mx-auto">
-
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-
-      <div class="md:col-span-1">
-        <a href="#hero" style="display:inline-flex; align-items:center; gap:10px; text-decoration:none; margin-bottom:1.2rem;">
-          <div style="width:32px; height:32px; background:linear-gradient(135deg,#7C3AED,#4C1D95); border-radius:8px; display:flex; align-items:center; justify-content:center;">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 12L8 2L14 12H2Z" fill="white" opacity="0.9"/></svg>
-          </div>
-          <span style="font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:700; color:#fff;">Adsprint</span>
-        </a>
-        <p style="font-family:'Inter',sans-serif; font-size:0.82rem; font-weight:300; color:rgba(255,255,255,0.3); line-height:1.8;">
-          Premium digital experiences for modern brands.
-        </p>
-      </div>
-
-      <div>
-        <p style="font-family:'Space Grotesk',sans-serif; font-size:0.62rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(167,139,250,0.6); margin-bottom:1.2rem;">Services</p>
-        <ul style="display:flex; flex-direction:column; gap:0.7rem;">
-          <li><a href="#services" class="nav-link" style="font-size:0.82rem; letter-spacing:0;">Website Design</a></li>
-          <li><a href="#services" class="nav-link" style="font-size:0.82rem; letter-spacing:0;">Hospitality Sites</a></li>
-          <li><a href="#services" class="nav-link" style="font-size:0.82rem; letter-spacing:0;">AI Automation</a></li>
-          <li><a href="#services" class="nav-link" style="font-size:0.82rem; letter-spacing:0;">Conversion CRO</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <p style="font-family:'Space Grotesk',sans-serif; font-size:0.62rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(167,139,250,0.6); margin-bottom:1.2rem;">Company</p>
-        <ul style="display:flex; flex-direction:column; gap:0.7rem;">
-          <li><a href="#about"   class="nav-link" style="font-size:0.82rem; letter-spacing:0;">About</a></li>
-          <li><a href="#process" class="nav-link" style="font-size:0.82rem; letter-spacing:0;">Process</a></li>
-          <li><a href="#contact" class="nav-link" style="font-size:0.82rem; letter-spacing:0;">Contact</a></li>
-        </ul>
-      </div>
-
-      <div>
-        <p style="font-family:'Space Grotesk',sans-serif; font-size:0.62rem; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(167,139,250,0.6); margin-bottom:1.2rem;">Contact</p>
-        <p style="font-family:'Inter',sans-serif; font-size:0.82rem; color:rgba(255,255,255,0.35); margin-bottom:0.7rem; font-weight:300;">hello@adsprint.in</p>
-        <p style="font-family:'Inter',sans-serif; font-size:0.82rem; color:rgba(255,255,255,0.35); margin-bottom:1.5rem; font-weight:300;">Goa, India</p>
-        <div style="display:flex; gap:0.6rem;">
-          <a href="#" aria-label="Instagram" style="width:34px; height:34px; border:1px solid rgba(124,58,237,0.25); border-radius:8px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); transition:all 0.3s; text-decoration:none;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/></svg>
-          </a>
-          <a href="#" aria-label="Twitter" style="width:34px; height:34px; border:1px solid rgba(124,58,237,0.25); border-radius:8px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); transition:all 0.3s; text-decoration:none;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-          </a>
-          <a href="https://wa.me/919800000000" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" style="width:34px; height:34px; border:1px solid rgba(124,58,237,0.25); border-radius:8px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); transition:all 0.3s; text-decoration:none;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-          </a>
-          <a href="#" aria-label="LinkedIn" style="width:34px; height:34px; border:1px solid rgba(124,58,237,0.25); border-radius:8px; display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,0.4); transition:all 0.3s; text-decoration:none;">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
-          </a>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="divider" style="margin-bottom:1.5rem;"></div>
-    <div style="display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:1rem;">
-      <p style="font-family:'Inter',sans-serif; font-size:0.68rem; color:rgba(255,255,255,0.18);">© 2025 Adsprint. All rights reserved.</p>
-      <div style="display:flex; gap:1.5rem;">
-        <a href="#" style="font-family:'Inter',sans-serif; font-size:0.68rem; color:rgba(255,255,255,0.18); text-decoration:none; transition:color 0.3s;">Privacy</a>
-        <a href="#" style="font-family:'Inter',sans-serif; font-size:0.68rem; color:rgba(255,255,255,0.18); text-decoration:none; transition:color 0.3s;">Terms</a>
-      </div>
-    </div>
-
-  </div>
-</footer>
-
-
-<!-- ══════════════════════════════════════
-     JAVASCRIPT
-══════════════════════════════════════ -->
-<script>
-(function () {
-  'use strict';
-
-  gsap.registerPlugin(ScrollTrigger);
-
-  /* ─── Typewriter ─── */
-  var phrases   = [
-    'Websites That Turn\nVisitors Into Customers.',
-    'Premium Digital\nExperiences That Convert.',
-    'AI Automation That\nWorks While You Sleep.'
-  ];
-  var pIdx = 0, cIdx = 0, deleting = false;
-  var target  = document.getElementById('typeTarget');
-  var cursorEl = document.getElementById('typeCursor');
-
-  function type() {
-    var raw   = phrases[pIdx];
-    var plain = raw;
-    cIdx = deleting ? cIdx - 1 : cIdx + 1;
-    var slice = plain.substring(0, cIdx);
-    target.innerHTML = slice.replace(/\n/g, '<br/>');
-
-    var speed = deleting ? 30 : 60 + Math.random() * 30;
-
-    if (!deleting && cIdx === plain.length) {
-      speed = 2400; deleting = true;
-    } else if (deleting && cIdx === 0) {
-      deleting = false;
-      pIdx = (pIdx + 1) % phrases.length;
-      speed = 450;
-    }
-    setTimeout(type, speed);
-  }
-
-  /* ─── Hero entrance ─── */
-  var heroEye   = document.getElementById('heroEye');
-  var heroSub   = document.getElementById('heroSub');
-  var heroBtns  = document.getElementById('heroBtns');
-  var heroBadge = document.getElementById('heroBadge');
-  var scrollHint= document.getElementById('scrollHint');
-  var ring1     = document.getElementById('ring1');
-  var ring2     = document.getElementById('ring2');
-
-  gsap.set([heroEye, heroSub, heroBtns, heroBadge], { y: 30 });
-
-  var tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-  tl
-    .to(heroBadge, { opacity: 1, y: 0, duration: 0.7 }, 0.3)
-    .to(heroEye,   { opacity: 1, y: 0, duration: 0.7 }, 0.55)
-    .add(function () { setTimeout(type, 100); })
-    .to(heroSub,   { opacity: 1, y: 0, duration: 0.7 }, '+=1.0')
-    .to(heroBtns,  { opacity: 1, y: 0, duration: 0.65 }, '-=0.35')
-    .to(scrollHint,{ opacity: 1, duration: 0.5 }, '-=0.1');
-
-  /* ─── Ring pulse ─── */
-  gsap.to(ring1, { scale: 1.06, duration: 4, ease: 'sine.inOut', repeat: -1, yoyo: true });
-  gsap.to(ring2, { scale: 0.94, duration: 3.5, ease: 'sine.inOut', repeat: -1, yoyo: true });
-
-  /* ─── Navbar ─── */
-  var navbar = document.getElementById('navbar');
-  setTimeout(function () {
-    gsap.to(navbar, { y: 0, opacity: 1, duration: 0.7, ease: 'power2.out' });
-  }, 600);
-
-  window.addEventListener('scroll', function () {
-    navbar.classList.toggle('solid', window.scrollY > 60);
-  }, { passive: true });
-
-  /* ─── Parallax hero ─── */
-  gsap.to('#hero .orb-1', { y: -120, ease: 'none',
-    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1 }
-  });
-  gsap.to('#hero .orb-2', { y: 80, ease: 'none',
-    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 1.5 }
-  });
-  gsap.to('#hero .grid-lines', { yPercent: 30, ease: 'none',
-    scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: 2 }
-  });
-
-  /* ─── Scroll reveals ─── */
-  document.querySelectorAll('.reveal').forEach(function (el) {
-    gsap.fromTo(el,
-      { opacity: 0, y: 52 },
-      { opacity: 1, y: 0, duration: 0.95, ease: 'power2.out',
-        scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none none' }
-      }
-    );
-  });
-
-  document.querySelectorAll('.reveal-left').forEach(function (el) {
-    gsap.fromTo(el,
-      { opacity: 0, x: -52 },
-      { opacity: 1, x: 0, duration: 1, ease: 'power2.out',
-        scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
-      }
-    );
-  });
-
-  document.querySelectorAll('.reveal-right').forEach(function (el) {
-    gsap.fromTo(el,
-      { opacity: 0, x: 52 },
-      { opacity: 1, x: 0, duration: 1, ease: 'power2.out',
-        scrollTrigger: { trigger: el, start: 'top 85%', toggleActions: 'play none none none' }
-      }
-    );
-  });
-
-  /* ─── Staggered service cards ─── */
-  gsap.fromTo('.svc-card',
-    { opacity: 0, y: 60, scale: 0.96 },
-    { opacity: 1, y: 0, scale: 1, duration: 0.8, ease: 'power2.out', stagger: 0.12,
-      scrollTrigger: { trigger: '#services', start: 'top 80%', toggleActions: 'play none none none' }
-    }
-  );
-
-  /* ─── Mobile menu ─── */
-  var burgerBtn    = document.getElementById('burgerBtn');
-  var mobileDrawer = document.getElementById('mobileDrawer');
-  var closeDrawer  = document.getElementById('closeDrawer');
-
-  function open()  { mobileDrawer.classList.add('open'); }
-  function close() { mobileDrawer.classList.remove('open'); }
-
-  burgerBtn.addEventListener('click', open);
-  closeDrawer.addEventListener('click', close);
-  mobileDrawer.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', close); });
-
-  /* ─── Smooth anchor scroll ─── */
-  document.querySelectorAll('a[href^="#"]').forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      var t = document.querySelector(this.getAttribute('href'));
-      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
-    });
-  });
-
-})();
-</script>
-
+    </footer>
+    
+    <script>
+        // GSAP Animations
+        gsap.registerPlugin(ScrollTrigger);
+        
+        // Hero Animations
+        gsap.from('.hero-title', {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            delay: 0.3
+        });
+        
+        gsap.from('.hero-subtitle', {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 0.6
+        });
+        
+        gsap.from('.hero-cta', {
+            opacity: 0,
+            y: 30,
+            duration: 1,
+            delay: 0.9
+        });
+        
+        // Scroll Animations
+        gsap.utils.toArray('.fade-in').forEach(elem => {
+            gsap.from(elem, {
+                opacity: 0,
+                y: 50,
+                duration: 1,
+                scrollTrigger: {
+                    trigger: elem,
+                    start: 'top 80%',
+                    end: 'top 50%',
+                    scrub: 1
+                }
+            });
+        });
+        
+        // Stagger Card Animations
+        gsap.utils.toArray('.stagger-cards').forEach(container => {
+            gsap.from(container.children, {
+                opacity: 0,
+                y: 50,
+                stagger: 0.2,
+                duration: 0.8,
+                scrollTrigger: {
+                    trigger: container,
+                    start: 'top 80%'
+                }
+            });
+        });
+        
+        // Stats Counter
+        function animateCounter(elem) {
+            const target = parseInt(elem.getAttribute('data-target'));
+            let current = 0;
+            const increment = target / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                elem.textContent = Math.floor(current) + (target === 98 ? '%' : '+');
+            }, 30);
+        }
+        
+        ScrollTrigger.create({
+            trigger: '.stat-number',
+            start: 'top 80%',
+            onEnter: () => {
+                document.querySelectorAll('.stat-number').forEach(animateCounter);
+            },
+            once: true
+        });
+        
+        // Particles
+        const particlesContainer = document.getElementById('particles');
+        for (let i = 0; i < 30; i++) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = Math.random() * 100 + '%';
+            particle.style.top = Math.random() * 100 + '%';
+            particle.style.animationDelay = Math.random() * 20 + 's';
+            particlesContainer.appendChild(particle);
+        }
+        
+        // Mobile Menu
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileClose = document.getElementById('mobile-close');
+        
+        mobileToggle.addEventListener('click', () => {
+            mobileMenu.classList.add('active');
+        });
+        
+        mobileClose.addEventListener('click', () => {
+            mobileMenu.classList.remove('active');
+        });
+        
+        // Typewriter Effect
+        const text = "Strategic Websites for Modern Businesses";
+        const typewriter = document.querySelector('.typewriter');
+        let index = 0;
+        
+        function type() {
+            if (index < text.length) {
+                typewriter.textContent = text.substring(0, index + 1);
+                index++;
+                setTimeout(type, 50);
+            }
+        }
+        
+        setTimeout(type, 500);
+    </script>
 </body>
 </html>
-```
